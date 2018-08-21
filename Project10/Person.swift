@@ -9,6 +9,7 @@
 import UIKit
 
 //Using Codeable is preferred when dealing with Swift only code because it is streamlined compared to NSCoding. Uses JSON to read and write.
+//Unlike NSCoding, we don't have to require a special init aDecoder or an aCoder method.
 
 class Person: NSObject, Codable {
     var name: String

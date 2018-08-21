@@ -19,6 +19,20 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         //add a button to our nav to let the user pick from the UIImagePicker
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewPerson))
         
+        //load our data from UserDefaults, using codeable
+        //if savedPeople exists, load it in as Data and then attempt to decode it as a [Person] using JSONDecoder method
+        let defaults = UserDefaults.standard
+        
+        if let savedPeople = defaults.object(forKey: "people") as? Data {
+            let jsonDecoder = JSONDecoder()
+            
+            do {
+                //no typecast needed because Swift will automatically attempt to return a [Person], else it will use our catch block
+                people = try jsonDecoder.decode([Person].self, from: savedPeople)
+            } catch {
+                print("Failed to load people")
+            }
+        }
         
     }
 
@@ -61,6 +75,17 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         
     }
     
+    //Subclassing Codeable for our Person class allows us to write a function that is much more streamlined.
+    func save() {
+        let jsonEncoder = JSONEncoder()
+        if let savedData = try? jsonEncoder.encode(people) {
+            let defaults = UserDefaults.standard
+            defaults.set(savedData, forKey: "people")
+        } else {
+            print("Failed to save people.")
+        }
+    }
+    
     //MARK: - DELEGATE METHODS for UIImagePickerControllerDelegate
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
@@ -84,6 +109,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         let person = Person(name: "Unknown", image: imageName)
         people.append(person)
         collectionView?.reloadData()
+        self.save()
     
     }
     
@@ -101,6 +127,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
             person.name = newName.text!
             
             self.collectionView?.reloadData()
+            self.save()
             
         })
         
