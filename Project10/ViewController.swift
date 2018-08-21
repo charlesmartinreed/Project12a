@@ -19,12 +19,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         //add a button to our nav to let the user pick from the UIImagePicker
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewPerson))
         
-        //load our data from NSDefaults
-        //treat the data we pull out as being of type Data and then typecast that object as an array of Person objects so that our app can use it as it expects
-        let defaults = UserDefaults.standard
-        if let savedPeople = defaults.object(forKey: "people") as? Data {
-            people = NSKeyedUnarchiver.unarchiveObject(with: savedPeople) as! [Person]
-        }
+        
     }
 
   
@@ -66,17 +61,6 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         
     }
     
-    //MARK: - NSKeyedArchiver.archivedData(withRootObject:) method
-    // used to convert object and associated objects - object graph - into a Data object
-    //we'll call save() when we change a name or import a new photo
-    
-    func save() {
-        let savedData = NSKeyedArchiver.archivedData(withRootObject: people)
-        let defaults = UserDefaults.standard
-        defaults.set(savedData, forKey: "People")
-    }
-    
-    
     //MARK: - DELEGATE METHODS for UIImagePickerControllerDelegate
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
@@ -100,7 +84,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         let person = Person(name: "Unknown", image: imageName)
         people.append(person)
         collectionView?.reloadData()
-        self.save()
+    
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -117,7 +101,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
             person.name = newName.text!
             
             self.collectionView?.reloadData()
-            self.save()
+            
         })
         
         present(ac, animated: true, completion: nil)

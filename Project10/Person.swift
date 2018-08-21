@@ -8,9 +8,9 @@
 
 import UIKit
 
-//NSCoding requires working with OBJECTS, or structs interchangeable with objects, so this is why we used a class for making a Person instead of a struct.
+//Using Codeable is preferred when dealing with Swift only code because it is streamlined compared to NSCoding. Uses JSON to read and write.
 
-class Person: NSObject, NSCoding {
+class Person: NSObject, Codable {
     var name: String
     var image: String
     
@@ -21,16 +21,4 @@ class Person: NSObject, NSCoding {
         self.image = image
     }
     
-    //required means if anyone wants to subclass this class, they need to implement this method
-    //used when loading objects of this class
-    required init(coder aDecoder: NSCoder) {
-        name = aDecoder.decodeObject(forKey: "name") as! String
-        image = aDecoder.decodeObject(forKey: "image") as! String
-    }
-    
-    //used when saving objects of this class
-    func encode(with aCoder: NSCoder) {
-        aCoder.encode(name, forKey: "name")
-        aCoder.encode(image, forKey: "image")
-    }
 }
